@@ -7,11 +7,30 @@ public class GenerateAnswer
 
     public static async Task<string> GenerateAnswerAsync(string promptText)
     {
-        using var client = new HttpClient { BaseAddress = new Uri("http://localhost:11434/") };
+        
+        var client = new HttpClient
+        {
+            BaseAddress = new Uri("http://127.0.0.1:11500/")
+        };
 
-        var payload = new { model = "phi", prompt = promptText };
+        var payload = new
+        {
+            model = "phi",  // check your actual model name
+            prompt = promptText
+        };
+
         var response = await client.PostAsJsonAsync("api/generate", payload);
-        response.EnsureSuccessStatusCode();
+
+        if (response.IsSuccessStatusCode)
+        {
+            var result = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(result);
+        }
+        else
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Error {response.StatusCode}: {error}");
+        }
 
         var content = await response.Content.ReadAsStringAsync();
 
