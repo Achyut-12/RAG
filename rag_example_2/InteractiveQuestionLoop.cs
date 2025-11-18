@@ -19,7 +19,7 @@ public class InteractiveQuestionLoop
             // Retrieve top 3 relevant chunks
             var topDocs = documents.Zip(embeddings, (doc, emb) => (doc, CosineSimilarity.CosineSimilarityMethod(qVec, emb)))
                                    .OrderByDescending(x => x.Item2)
-                                   .Take(3)
+                                   .Take(5)
                                    .Select(x => x.doc);
 
             var context = string.Join("\n\n", topDocs);
@@ -39,8 +39,6 @@ public class InteractiveQuestionLoop
                          
             var answer = await GenerateAnswer.GenerateAnswerAsync(prompt);
             return answer;
-            // Console.WriteLine("\n🧠 Answer:");
-            // Console.WriteLine(answer);
         
     }
 }

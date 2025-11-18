@@ -1,8 +1,6 @@
 ﻿
 using MathNet.Numerics.LinearAlgebra;
-using Microsoft.Extensions.AI;
 using UglyToad.PdfPig;
-using UglyToad.PdfPig.Graphics;
 
 namespace RagEngine
 {
@@ -36,27 +34,27 @@ namespace RagEngine
                 }
             }
 
+            // chunking stratgy 
             // Split into chunks (~500 characters each)
-            static IEnumerable<string> ChunkText(string text, int chunkSize = 500)
-            {
-                for (int i = 0; i < text.Length; i += chunkSize)
-                    yield return text.Substring(i, Math.Min(chunkSize, text.Length - i));
-            }
+            //static IEnumerable<string> ChunkText(string text, int chunkSize = 500)
+            //{
+            //    for (int i = 0; i < text.Length; i += chunkSize)
+            //        yield return text.Substring(i, Math.Min(chunkSize, text.Length - i));
+            //}
 
             Documents = paragraphs
-                .SelectMany(p => ChunkText(p))
+                .SelectMany(p => TextChunker.ChunkText(p))
                 .Where(s => !string.IsNullOrWhiteSpace(s))
                 .ToArray();
 
             Embeddings = Documents.Select(d => ComputeEmbeddings.ComputeEmbedding(d)).ToArray();
+            
         }
 
         public async Task<string> AskQuestion(string question)
         {
             if (!IsLoaded)
                 return "❌ No PDF loaded yet. Please upload a file first.";
-
-            var questionEmb = ComputeEmbeddings.ComputeEmbedding(question);
             // -----------------------------
             // STEP 4: Interactive Question Loop
             // -----------------------------

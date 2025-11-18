@@ -10,7 +10,7 @@ public class GenerateAnswer
         
         var client = new HttpClient
         {
-            BaseAddress = new Uri("http://127.0.0.1:11500/")
+            BaseAddress = new Uri("http://127.0.0.1:11434/")
         };
 
         var payload = new
